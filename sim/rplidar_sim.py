@@ -17,8 +17,8 @@ def synthetic_distance_mm(angle_deg: float) -> float:
     """Fake 4m x 6m room with a pillar, so captured scans look real-ish."""
     a = math.radians(angle_deg)
     half_w, half_h = 2000.0, 3000.0  # mm
-    dx = abs(math.cos(a)) / half_w if math.cos(a) else float("inf")
-    dy = abs(math.sin(a)) / half_h if math.sin(a) else float("inf")
+    dx = abs(math.cos(a)) / half_w
+    dy = abs(math.sin(a)) / half_h
     dist = 1.0 / max(dx, dy)
     if 25 <= angle_deg <= 35:        # a pillar in front
         dist = min(dist, 800.0)
