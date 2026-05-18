@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>rplidar_ros</name>
+  <version>0.1.0</version>
+  <description>Thin ROS2 node: publishes RPLIDAR scans as sensor_msgs/LaserScan.</description>
+  <maintainer email="satyanar@mtu.edu">Pavankumar Satyanarayan</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>rclcpp</depend>
+  <depend>sensor_msgs</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
