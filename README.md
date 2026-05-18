@@ -93,24 +93,36 @@ ros2 run rplidar_ros rplidar_node
 The node logs a throttled heartbeat as it publishes, e.g.
 `published scan #50  points=360  range[0]=2.00 m`.
 
-## Status and limitations
+## Performance
 
-Stated plainly, because the point of the project is that the claims are
-checkable:
+The parser's buffering was written the simple, obviously-correct way first,
+then optimised under measurement — not guesswork. `src/bench_parser.cpp`
+replays a capture through the parser in the real small-chunk call pattern;
+callgrind located the hotspots, wall-clock quantified them.
+
+| Stage | Throughput | Instructions (callgrind) |
+|---|---|---|
+| Baseline | 200 MB/s | 163.1 M |
+| Remove O(n) front-of-buffer erase | 220 MB/s | 90.1 M |
+| Reserve the scan vector to known rotation size | 287 MB/s | 67.6 M |
+
+Net: +43% throughput, -59% instructions, output bit-identical throughout
+(216,000 scans, unchanged). Optimisation was deliberately stopped there: the
+dominant remaining cost is the irreducible per-record decode itself, not a
+fixable inefficiency.
+
+## Status and limitations
 
 - **The sensor is simulated, not physical.** The simulator is byte-faithful
   to the documented RPLIDAR wire format, and the architecture treats the
   device as an interchangeable byte source, but no physical RPLIDAR has been
   on the other end.
-- **The parser's input buffering is deliberately naive.** It erases from the
-  front of the buffer in O(n). This is a known, intentionally-scoped hotspot,
-  kept simple so it can be measured and then optimised in a profiling pass.
 - **Cross-process ROS 2 introspection does not work under default WSL2
   networking.** `ros2 topic echo` and RViz rely on inter-process DDS
-  discovery, which the default WSL2 network stack does not support — a
-  well-documented WSL2 limitation, independent of this code. The node is
-  verified directly via its own in-process scan logging. On native Linux, or
-  on WSL2 with mirrored networking enabled, it publishes standard
+  discovery, which WSL2's network stack does not support even in mirrored
+  mode (the Hyper-V firewall blocks DDS discovery traffic) — a documented
+  WSL2 limitation, independent of this code. The node is verified directly
+  via its own in-process scan logging. On native Linux it publishes standard
   `sensor_msgs/LaserScan` and is visualisable in RViz like any other laser
   source.
 
@@ -122,6 +134,7 @@ src/udp_capture.cpp         protocol-agnostic UDP -> file recorder
 src/rplidar_parser.cpp      parser library implementation
 include/rplidar_parser.hpp  parser library public header
 src/parse_file.cpp          offline replay / verifier
+src/bench_parser.cpp        parser micro-benchmark harness
 CMakeLists.txt              plain CMake build for the above
 ros2_ws/src/rplidar_ros/    ROS 2 (Jazzy) node reusing the parser unchanged
 captures/                   capture fixtures (binary, gitignored)
