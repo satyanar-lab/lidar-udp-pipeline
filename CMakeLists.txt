@@ -4,6 +4,7 @@ project(lidar_udp_pipeline CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_compile_options(-Wall -Wextra -O2 -g)
+enable_testing()
 
 add_executable(udp_capture src/udp_capture.cpp)
 
@@ -15,3 +16,8 @@ target_link_libraries(parse_file PRIVATE rplidar_parser)
 
 add_executable(bench_parser src/bench_parser.cpp)
 target_link_libraries(bench_parser PRIVATE rplidar_parser)
+
+# Unit tests (dependency-free, run via ctest)
+add_executable(test_parser tests/test_parser.cpp)
+target_link_libraries(test_parser PRIVATE rplidar_parser)
+add_test(NAME parser_tests COMMAND test_parser)
