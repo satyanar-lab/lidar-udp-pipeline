@@ -87,6 +87,9 @@ Offline path — record, then replay through the parser:
 Live path — the ROS 2 node, with the simulator running:
 
 ```bash
+cd ros2_ws
+source /opt/ros/jazzy/setup.bash
+source install/setup.bash
 ros2 run rplidar_ros rplidar_node
 ```
 
