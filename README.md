@@ -96,6 +96,10 @@ ros2 run rplidar_ros rplidar_node
 The node logs a throttled heartbeat as it publishes, e.g.
 `published scan #50  points=360  range[0]=2.00 m`.
 
+![Live RPLIDAR pipeline: the ROS2 node decoding the live UDP stream and publishing LaserScan](assets/live_pipeline.png)
+
+*The node running against the live simulator. Each heartbeat is a complete 360-point scan, and `range[0]` reads 2.00 m — the 2000 mm wall at 0°, matching the modelled room geometry. The parser producing this is the same source compiled, unchanged, into the offline tools.*
+
 ## Performance
 
 The parser's buffering was written the simple, obviously-correct way first,
