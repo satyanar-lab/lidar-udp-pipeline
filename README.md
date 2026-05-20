@@ -1,5 +1,4 @@
-Replace the entire contents of README.md with this:
-markdown# lidar-udp-pipeline
+# lidar-udp-pipeline
 
 A from-scratch RPLIDAR data pipeline in C++ and Python: a byte-faithful UDP
 sensor stream, a dependency-free C++ parser library that decodes the RPLIDAR
